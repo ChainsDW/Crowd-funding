@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+<title>待审核项目</title>
+{% endblock %}
+
+{% block body %}
+<ul class="nav nav-tabs">
+  <li role="presentation" class="active"><a href="javascript:show_project(0)">未审核项目</a></li>
+  <li role="presentation"><a href="javascript:show_project(1)">初步审核</a></li>
+  <li role="presentation"><a href="javascript:show_project(2)">审核完成</a></li>
+</ul>
+<div class="list-group" id="list_result">
+
+</div>
+    <script>
+        $(function () {
+            show_project(0)
+        });
+
+        function show_project(n) {
+            if(n===0) {
+                $('ul li').removeClass('active');
+                console.log($('ul:first'));
+                $('ul li:first').addClass('active');
+            }else if(n===1){
+                $('ul li').removeClass('active');
+                $('ul li:eq(1)').addClass('active');
+            }else {
+                $('ul li').removeClass('active');
+                $('ul li:last').addClass('active');
+            }
+            $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+            });
+            $.ajax({
+                url: '/audit/listProject.html',
+                data:{'n': n},
+                type:'POST',
+                dataType: 'json',
+                success:function (arg) {
+                    console.log(arg);
+                    $('#list_result').empty();
+                    if(arg['status']){
+                        for(var i = 0,len = arg['projects'].length; i < len; i++){
+                            var project = arg['projects'][i];
+                            var a = document.createElement('a');
+                            a.className = 'list-group-item';
+                            if (project.status !== 2){
+                            a.href = '/audit/project.html?pr='+project.id;
+                            }
+                            var d1 = document.createElement('div');
+                            d1.innerText = '项目名称:' + project.name;
+                            var d2 = document.createElement('div');
+                            d2.innerText = '项目简介:' + project.brief;
+                            a.appendChild(d1);
+                            a.appendChild(d2);
+                            console.log(a);
+                            document.getElementById('list_result').appendChild(a);
+                        }
+                    }
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

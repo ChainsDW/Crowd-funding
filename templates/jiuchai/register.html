@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+    <title>注册</title>
+    <style>
+        .row .col-md-5 .sending{
+                cursor: not-allowed;
+                background-color: lightgrey !important
+        }
+        .error{
+            color: red;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container col-lg-offset-4">
+    <form class="form-signin col-lg-3" method="post">{% csrf_token %}
+        <h3 class="form-signin-heading">众筹</h3>
+        <input type="email" name="email" class="form-control" id="email" placeholder="Email address" required autofocus>
+        <span id="register_error_summary" class="errornote" style="color: red"></span>
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text"  name="email_code" class="form-control" id="email_code" placeholder="验证码"></div>
+            <div class="col-md-5" style="float: right">
+                <input type="button" value="发送验证码" id="code" class="form-control"></div>
+        </div>
+        <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="new-password">
+        <input type="text" name="username" placeholder="昵称" class="form-control" required>
+        <div class="form-control">
+            <input type="radio" name="role" value="发起人">发起人
+            <input type="radio" name="role" value="投资人">投资人
+        </div>
+        <input type="text" name="name" placeholder="实名" class="form-control" required>
+        <input type="text" name="id_code" placeholder="身份证号码" class="form-control" required>
+        <input type="text" name="phone" placeholder="手机号码" class="form-control" required>
+        {% if errors %}
+            <span style="color: red;">{{ errors.error }}</span>
+        {% endif %}
+        <button id="post" class="btn btn-lg btn-primary btn-block sending" type="button">Register and login</button>
+    </form>
+    </div>
+
+    <script>
+    $(function () {
+           send_code();
+           Post_data();
+    });
+    
+    
+    function send_code() {
+        $('#code').click(function () {
+            $('#register_error_summary').empty(); //清空错误信息
+            var email = $('#email').val();
+            if (email.trim().length === 0){
+                $('#register_error_summary').text('请输入注册邮箱');
+                return;
+                }
+            if($(this).hasClass('sending')){
+                    // 遇到return下面不再继续执行
+                    return;
+                }
+            var ths = $(this);
+            var time = 60;
+            $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+            });
+            $.ajax({
+                    url: "/send_msg/",
+                    type: 'POST',
+                    data: {email: email},
+                    dataType: 'json',
+                    success: function(arg){
+                        // {'status': False, "summary": '整体错误错误', 'error': {}}
+                        if(!arg.status){
+                            $('#register_error_summary').text(arg.summary);
+                        }else{
+                            // 后台已经发送成功
+                            ths.addClass('sending');
+                            var interval = setInterval(function(){
+                                ths.val("已发送(" + time + ")");
+                                time -= 1;
+                                if(time <= 0){
+                                    clearInterval(interval);
+                                    ths.removeClass('sending');
+                                    ths.val("获取验证码");
+                                }
+                            }, 1000);
+                        }
+                    }
+                });
+        })
+    }
+    
+    
+    function Post_data() {
+        $('#post').click(function () {
+            $('.error').empty();
+            var post_dict = {};
+            $('.form-signin input').each(function(){
+                post_dict[$(this).attr("name")] = $(this).val();
+            });
+            $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+            });
+            $.ajax({
+                    url: "/register.html",
+                    type: 'POST',
+                    data: post_dict,
+                    dataType: 'json',
+                    success:function (arg) {
+                        if(arg.status){
+                            window.location.href = '/homepage';
+                        }else {
+                            console.log(arg);
+                            $.each(arg.message, function(k,v){
+                            //<span class="error">s</span>
+                            var tag = document.createElement('span');
+                            tag.className = 'error';
+                            tag.innerText = v[0]['message'];
+                            $('.form-signin input[name="'+ k +'"]').after(tag);
+                            })
+                        }
+                        }
+                    })
+    })}
+    
+    </script>
+{% endblock %}

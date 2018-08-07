@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>窝头众筹主页</title>
+</head>
+<body>
+    <div class="btn-group" role="group" id="view_chains">
+        <button type="button" class="btn btn-default"><a href="/index">我是发起人</a></button>
+    </div>
+
+    <div>
+        {% for project in projects %}
+            <div style="border: 1px solid black" class="project" id="{{ project.id }}">
+                <div>{{ project.name }}</div>
+                <div>{{ project.sender }}</div>
+                <div>{{ project.amount_goal }}</div>
+                <div>{{ project.time_limit }}</div>
+                <div>{{ project.brief }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if projects.has_previous %}
+                <a href="?page={{ projects.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ projects.number }} of {{ projects.paginator.num_pages }}.
+            </span>
+
+            {% if projects.has_next %}
+                <a href="?page={{ projects.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <script>
+        $('.project').click(function () {
+            window.open('jiucai?pr='+this.id)
+        })
+    </script>
+</body>
+</html>

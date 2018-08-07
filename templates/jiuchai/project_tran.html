@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load tag %}
+
+{% block body %}
+    <div style="margin: 20px">
+    <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">{{ name }}项目计划和回报</div>
+
+    <!-- Table -->
+    <table class="table">
+        <thead>
+            <td>项目计划</td>
+            <td>回报</td>
+        </thead>
+        <tbody>
+        {% render_project index %}
+    </table>
+</div>
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">{{ name }}交易/承诺</div>
+
+    <!-- Table -->
+    <table class="table">
+        <thead>
+            <td>区块索引</td>
+            <td>投资者</td>
+            <td>收款人</td>
+            <td>投资金额</td>
+            <td>承诺/付款</td>
+            <td>批次</td>
+            <td>时间</td>
+        </thead>
+        <tbody>
+        {% each_project_trans index %}
+{#        <tr>#}
+{#            <td>{{ tran.amount }}</td>#}
+{#            <td>{{ tran.recipient }}</td>#}
+{#            <td>{{ tran.sender }}</td>#}
+{#            <td>{% render_project_name tran.companyID %}</td>#}
+{#        </tr>#}
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

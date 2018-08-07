@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+    <title>窝头众筹</title>
+    <style>
+        #user{
+            float: right;
+            margin-right: 40px;
+        }
+        #list-group{
+            width: 20%;
+            position: absolute;
+            bottom: 0;
+            top:52px;
+            margin-bottom: 0;
+            border: 1px solid #ddd;
+            border-radius: 0;
+        }
+        #list-group .active{
+            background-color: lightgray;
+        }
+        #right_box{
+            width: 80%;
+            position: absolute;
+            bottom: 0;
+            top:52px;
+            left: 20%;
+            overflow: scroll;
+        }
+        .error-cope{
+            display: block;
+            line-height: 20px;
+            width: 100%;
+            margin: 15px 0;
+            height: 20px;
+            text-align: center;
+        }
+        #funding{
+            margin: 5px;
+        }
+        .box_p{
+            display: inline-block;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: -7px;
+        }
+        #funding .box .caption span{
+            display: inline-block;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header" style="padding: 0 20px">
+            <a class="navbar-brand" href="">我的众筹</a>
+        </div>
+        <div class="navbar-right" style="line-height: 50px">
+            <div id="user">用户名：<a href="">{{ username }}</a><a href="#" style="margin-left: 10px">注销</a></div>
+        </div>
+    </div>
+</div>
+<div class="list-group" id="list-group">
+  <a href="javascript:supporting()" class="list-group-item active">我支持的</a>
+  <a href="javascript:funding()" class="list-group-item">我发起的</a>
+</div>
+<div id="right_box">
+    <div id="support">
+        <ul class="nav nav-tabs">
+              <li role="presentation" class="active"><a href="javascript:promise()">未支付</a></li>
+              <li role="presentation"><a href="javascript:true_trans()">已支付</a></li>
+        </ul>
+
+        <div class="panel panel-default" style="margin: 5px">
+        <!-- Default panel contents -->
+            <div class="panel-heading" id="heading">详细信息</div>
+            <!-- Table -->
+            <table class="table">
+                <thead>
+                    <td>项目名称</td>
+                    <td>筹资金额</td>
+                    <td>已筹资</td>
+                    <td>剩余时间</td>
+                    <td id="th"></td>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <span id="error"></span>
+        </div>
+    </div>
+    <div id="funding">
+        <span id="error1"></span>
+    </div>
+</div>
+
+    <script>
+        $(function () {
+            supporting();
+        });
+
+        var conditions = 'promise';
+
+        function supporting() {
+            $('#support').removeClass('hide');
+            $('#funding').addClass('hide');
+            $('#list-group a:first').addClass('active');
+            $('#list-group a:last').removeClass('active');
+            promise()
+        }
+
+        function funding() {
+            $('#support').addClass('hide');
+            $('#funding').removeClass('hide');
+            $('#list-group a:first').removeClass('active');
+            $('#list-group a:last').addClass('active');
+            funding_post()
+        }
+
+
+        function promise() {
+            $('#support ul li:first').addClass('active');
+            $('#support ul li:last').removeClass('active');
+            conditions = 'promise';
+            $('#support table tbody').empty();
+            support_post()
+        }
+
+
+        function true_trans() {
+            $('#support ul li:last').addClass('active');
+            $('#support ul li:first').removeClass('active');
+            conditions = 'true_trans';
+            $('#support table tbody').empty();
+            support_post()
+        }
+
+
+        function funding_post() {
+        $.ajaxSetup({
+                data: {'csrfmiddlewaretoken': '{{ csrf_token }}'}
+            });
+            $.ajax({
+                url: '/myCrowdfunding/getData',
+                type: 'POST',
+                dataType: 'json',
+                data: {'type': 'funding'},
+                success:function (arg) {
+                    if(arg.status){
+                        $('#funding').empty();
+                        for (var i=0, len = arg.data.length; i < len; i++) {
+                            var dic = arg.data[i];
+                            console.log(dic);
+                            var newbox = $('<div class="box"></div>');
+                            var col = $('<div class="col-sm-6 col-md-4"></div>');
+                            var thum = $('<div class="thumbnail"></div>');
+                            var img = $('<img src="/static/images/20130503_203330.jpg">');
+                            var cap = $('<div class="caption"></div>');
+                            var h3 = $('<h3>'+dic.name+'</h3>');
+                            var p = $('<p class="box_p">'+dic.brief+'</p>');
+                            var p2 = $('<p><a href="#" class="btn btn-default" role="button">修改项目信息</a> <a href="/each/trans.html?pr='+dic.id+'" class="btn btn-default" role="button">区块链信息</a></p>');
+                            if (dic.status === 0)
+                                {var p3 = $('<span>审核情况：未审核</span>');}
+                            else if(dic.status === 1)
+                                {var p3 = $('<span>审核情况：审核中</span>');}
+                            else if(dic.status === 2)
+                                {var p3 = $('<span>审核情况：审核成功</span>');}
+                            else
+                                {var p3 = $('<span>审核情况：审核失败</span>');}
+                            var sp = $('<span>截止到：'+dic.time_limit+'</span>');
+                            cap.append(h3);
+                            cap.append(p);
+                            cap.append(p3);
+                            cap.append(sp);
+                            cap.append(p2);
+                            thum.append(img);
+                            thum.append(cap);
+                            col.append(thum);
+                            newbox.append(col);
+                            $('#funding').append(newbox);
+                        }
+                    }else {
+                        $('#error1').text('您没有发起过任何众筹哦').addClass('error-cope')
+                    }
+                }
+            })
+        }
+
+
+        function support_post() {
+            $.ajaxSetup({
+                data: {'csrfmiddlewaretoken': '{{ csrf_token }}'}
+            });
+            $.ajax({
+                url: '/myCrowdfunding/getData',
+                type: 'POST',
+                dataType: 'json',
+                data: {'type': 'support', 'conditions': conditions},
+                success:function (arg) {
+                    if(conditions === 'promise'){
+                    $('#th').text('承诺支付（未支付）');}
+                    else if(conditions === 'true_trans'){
+                        $('#th').text('已支付');
+                    }
+                    if(arg.status){
+                        for (var i=0, len = arg.data.length; i < len; i++) {
+                            var dic = arg.data[i];
+                            var tr = document.createElement('tr');
+                            var td1 = document.createElement('td');
+                            var a = document.createElement('a');
+                            a.href = '/jiucai?pr='+ dic.id;
+                            a.innerText = dic['name'];
+                            td1.appendChild(a);
+                            tr.appendChild(td1);
+                            var td2 = document.createElement('td');
+                            td2.innerText = dic.goal;
+                            tr.appendChild(td2);
+                            var td3 = document.createElement('td');
+                            td3.innerText = dic.counts;
+                            tr.appendChild(td3);
+                            var td4 = document.createElement('td');
+                            td4.innerText = dic.days;
+                            tr.appendChild(td4);
+                            var td5 = document.createElement('td');
+                            td5.innerText = dic.amount;
+                            tr.appendChild(td5);
+                            $('#support table tbody').append(tr);
+                        }}else{
+                            $('#error').text('您没有支持的项目哦，快去支持吧').addClass('error-cope')
+                        }
+
+                    }
+            })
+        }
+    </script>
+{% endblock %}

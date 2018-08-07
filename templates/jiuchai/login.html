@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+    <title>登陆</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container col-lg-offset-4">
+        <form class="form-signin col-lg-3 pu ">{% csrf_token %}
+            <h3 class="form-signin-heading">众筹</h3>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="new-password" required>
+            {% if errors %}
+               <span style="color: red;">{{ errors.error }}</span>
+            {% endif %}
+{#            <div class="checkbox">#}
+{#                <label>#}
+{#                    <input type="checkbox" value="remember-me"> Remember me#}
+{#                </label>#}
+{#            </div>#}
+            <span id="error" style="color: red"></span>
+            <a href="/register.html" style="float: right">注册账户</a>
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="submit">Login</button>
+        </form>
+    </div> <!-- /container -->
+    <script>
+        $('#submit').click(function () {
+            var email = $('#email').val();
+            var password = $('#password').val();
+            console.log(email,password);
+            $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+            });
+            $.ajax({
+                    url: "/login.html",
+                    type: 'POST',
+                    data: {'email': email, 'pwd':password},
+                    dataType: 'json',
+                    success: function(arg){
+                        if(arg.status){
+                            window.location.href = '/homepage';
+                        }else {
+                            console.log(arg);
+                            $('#error').text(arg.summary)
+                        }
+                        }
+                    });
+                })
+    </script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'jiuchai/blockchains.html' %}
+{% load tag %}
+{% block body %}
+    <div style="margin: 20px">
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">承诺</div>
+
+    <!-- Table -->
+    <table class="table">
+        <thead>
+            <td>金额</td>
+            <td>收款人</td>
+            <td>支持者</td>
+            <td>项目</td>
+            <td>承诺/付款</td>
+            <td>批次</td>
+        </thead>
+        <tbody>
+        {% for tran in trans %}
+        <tr>
+            <td>{{ tran.amount }}</td>
+            <td>{{ tran.recipient }}</td>
+            <td>{{ tran.sender }}</td>
+            <td>{% render_project_name tran.companyID %}</td>
+            <td>{{ tran.status }}</td>
+            <td>{{ tran.stage }}</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+</div>
+{% endblock %}

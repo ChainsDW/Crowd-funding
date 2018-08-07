@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+    <title>初次审核</title>
+{% endblock %}
+{% block body %}
+    <menu>
+    <command onclick="alert('Hello World')">窝头区块链记账系统</command>
+    </menu>
+    <div id="{{ project.id }}" class="project">{{ project.name }}</div>
+    <span class="hide" id="id">{{ project.id }}</span>
+    <span class="hide" id="status">{{ project.status }}</span>
+    <div>项目简介：{{ project.brief }}</div>
+    <div>发起人：{{ project.sender }}</div>
+    <div>发起人联系方式：{{ project.phone_number }}</div>
+    <div class="btn-group" role="group" id="view_chains">
+        <button type="button" class="btn btn-default" id="download"><a href="/audit/download.html?path={{ project.file_adr }}">下载该项目附带材料</a></button>
+    </div>
+    <div class="form-group">
+        <textarea name="advice" id="advice" cols="40" rows="10" class="form-group" placeholder="评审意见"></textarea>
+        <div class="form-group">
+        <input type="button" value="未通过审核" id="nope" class="form-group">
+        <input type="button" value="提交审核" id="pass" class="form-group"></div>
+    </div>
+
+
+    <script>
+        $(function () {
+            nopo();
+            pass();
+        });
+
+        function nopo() {
+            $('#nope').click(function () {
+                var id = $('#id').text();
+                var batch = $('#status').text();
+                var advice = $('#advice').val();
+                $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+                });
+                $.ajax({
+                        url: "",
+                        type: 'POST',
+                        data: {'id': id, 'advice':advice, 'status': 3, 'batch': batch},
+                        dataType: 'json',
+                        success: function(arg){
+                            console.log(arg);
+                            if(arg['status']){
+                                window.location.href = '/audit/listProject.html';
+                            }
+                            }
+                        });
+            })
+        }
+        function pass() {
+            $('#pass').click(function () {
+                var id = $('#id').text();
+                var batch = $('#status').text();
+                var advice = $('#advice').val();
+                $.ajaxSetup({
+                data:{'csrfmiddlewaretoken':'{{ csrf_token }}'}
+                });
+                $.ajax({
+                        url: "",
+                        type: 'POST',
+                        data: {'id': id, 'advice':advice, 'status': 1, 'batch': batch},
+                        dataType: 'json',
+                        success: function(arg){
+                            console.log(arg);
+                            if(arg['status']){
+                                window.location.href = '/audit/listProject.html';
+                            }
+                            }
+                        });
+            })
+        }
+    </script>
+{% endblock %}

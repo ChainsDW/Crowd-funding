@@ -1,0 +1,56 @@
+{% load tag %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>窝头区块链记账系统</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+</head>
+<body>
+{% block body %}
+    {{ blocks }}
+<div style="margin: 20px">
+<span class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">区块</div>
+
+    <!-- Table -->
+    <table class="table">
+        <thead>
+            <td>区块索引</td>
+            <td>前区块哈希地址</td>
+            <td>工作量证明</td>
+            <td>时间</td>
+            <td>项目列表</td>
+            <td>交易(承诺)条数</td>
+        </thead>
+        <tbody>
+        {% for blocker in blocks.chain %}
+        <tr id="{{ blocker.index }}" style="cursor: pointer">
+            <td>{{ blocker.index }}</td>
+            <td>{{ blocker.previous_hash }}</td>
+            <td>{{ blocker.proof }}</td>
+            <td>{% render_time blocker.timestamp%}</td>
+            <td>{% for companyID in blocker.companyID %}<span style="margin-right: 5px">{% render_project_name companyID %}</span>{% endfor %}</td>
+            <td>{% count_trans blocker.transactions %}</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+</div>
+<script src="/static/js/jquery-3.3.1.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/npm.js"></script>
+{% endblock %}
+<script>
+    $('tr').click(function () {
+        if(this.children[5].innerHTML==0 && this.children[6].innerHTML==0){
+            alert('此区块没有承诺或交易')
+        }else{
+        window.location.href = '/chain/transactions?index='+this.id}
+    })
+</script>
+</body>
+</html>

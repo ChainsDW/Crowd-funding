@@ -1,0 +1,33 @@
+{% load tag %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发起人页面</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+</head>
+<body>
+<div style="margin: 100px; width: 500px">
+    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+        <div class="btn-group" role="group" id="new_crowdfunding">
+            <button type="button" class="btn btn-default"><a href="/wotou/post_data">建立众筹项目</a></button>
+        </div>
+        <div class="btn-group" role="group" id="view_chains">
+            <button type="button" class="btn btn-default"><a href="/wotou/crowdfunding/chain">查看窝头区块链账本</a></button>
+        </div>
+    </div>
+</div>
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/npm.js"></script>
+{#    <script>#}
+{#        $('#new_crowdfunding').click(function () {#}
+{#            $(window).attr('location', 'wotou/crowdfunding/new')#}
+{#        });#}
+{#        $('#view_chains').click(function () {#}
+{#            $(window).attr('location', 'chain')#}
+{#        })#}
+{#    </script>#}
+</body>
+</html>

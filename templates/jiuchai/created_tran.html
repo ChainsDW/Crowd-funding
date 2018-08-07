@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>支持项目</title>
+{% endblock %}
+
+{% block body %}
+    <form action="/transactions/new" METHOD="post">
+        数额 <input type="number" name="amount"><br/>
+        <input type="radio" name="c" value="pr" /> 承诺
+        <input type="radio" name="c" value="tr" /> 转账
+        <br/>
+        批次 <select name="stage" id="stage">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        项目 <input type="text" name="project_name" value="{{ project.name }}" readonly="true"><br/>
+        收款方 <input type="text" name="recipient" value="{{ project.sender }}" readonly="true"><br/>
+        <input type="submit" value="确认">
+        {% csrf_token %}
+    </form>
+{% endblock %}

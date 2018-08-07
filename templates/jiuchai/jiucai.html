@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load tag %}
+{% block title %}
+    <title>投资人页面</title>
+{% endblock %}
+{% block body %}
+    <menu>
+    <command onclick="alert('Hello World')">窝头区块链记账系统</command>
+    </menu>
+    <div id="{{ project.id }}" class="project">{{ project.name }}</div>
+    <div>项目简介：{{ project.brief }}</div>
+    <div>发起人：{{ project.sender }}</div>
+    <div>发起人联系方式：{{ project.phone_number }}</div>
+    <div class="btn-group" role="group" id="view_chains">
+        <button type="button" class="btn btn-default" id="download" path="{{ project.file_adr }}">下载该项目附带材料</button>
+    </div>
+    <div class="btn-group" role="group" id="view_chains">
+        <button type="button" class="btn btn-default"><a href="/each/trans.html?pr={{ project.id }}">查看该项目区块链账本</a></button>
+    </div>
+    <div class="btn-group" role="group" id="view_chains">
+        {% render_a_tag datas.status project.id %}
+    </div>
+    <div>
+        目前已筹资：{{ datas.count }}
+    </div>
+    <div>
+        目标总额： {{ project.amount_goal }}
+    </div>
+
+    <script>
+        $('#download').click(function () {
+            var path = $(this).attr('path');
+            var key = prompt("请输入16位下载密钥，如果没有密钥，请与发起人联系");
+            if (key.length ===16){
+            $.ajaxSetup({
+                data: {'csrfmiddlewaretoken': '{{ csrf_token }}'}
+            });
+            $.ajax({
+                type:'POST',
+                url:'',
+                data:{'path':path, 'key': key},
+                dataType: "json",
+                success: function (arg) {
+                    if(arg.status){
+                        window.location.href = '/download.html?path=' + path;
+                    }
+                }
+            })}}
+        )
+    </script>
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>众筹项目建立</title>
+    <link href="/static/css/animate.min.css" rel="stylesheet" />
+    <script src="/static/js/moment-with-locales(1).js"></script>
+    <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/npm.js"></script>
+</head>
+<body>
+<div class="col-md-offset-2" style="margin-top: 20px; margin-right: 16.66666667%;padding: 2px;">
+        <form action="post_data" method="post" enctype="multipart/form-data" class="">
+         <div style="float: left;padding: 3px" class="col-lg-5 table-bordered">
+            填写项目名称:<br>
+        <input type="text" name="name" class="form-control">
+         <br>
+         填写发起人信息:<br>
+        <input type="text" name="sender" class="form-control" value="{{ data.data }}">
+             {% if data.summary %}
+                <span style="color: red">{{ data.summary }}</span>
+             {% endif %}
+             <br>
+        提交联系方式:<br>
+        <input type="text" name="phone_number" class="form-control">
+        <br>
+         提交目标金额:<br>
+        <input type="text" name="amount_goal" class="form-control">
+            <br>
+         提交时间期限:<br>
+        <input type="text" name="time_limit" placeholder="格式：2018/7/25" class="form-control">
+        <br>
+         提交项目简介:<br>
+        <textarea name="brief" cols="25" rows="5" class="form-control"></textarea>
+        <br>
+         </div><div style="padding: 3px" class="col-lg-5 table-bordered">项目计划目标简介:<br>
+        <textarea name="goal" cols="25" rows="5" class="form-control"></textarea>
+        <br>阶段回报:<br>
+        <input type="text" name="return" class="form-control">
+        <br>
+         提交附带材料（仅zip,rar）:<br>
+        <input type="file" name="myfile" class="form-control">
+        <div class="btn-group" role="group" id="view_chains">
+            <input type="submit" class="btn btn-default form-control" value="完成项目创建">
+        </div>
+         </div>
+            {% csrf_token %}
+		</form>
+</div>
+<script>
+
+</script>
+</body>
+</html>
